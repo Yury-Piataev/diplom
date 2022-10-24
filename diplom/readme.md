@@ -183,11 +183,11 @@ _
 Разработана роль для установки Prometheus, Alert Manager и Grafana. 
 Подключен дашборд, отображаются метрики.
 
-![www](/pic/grafana.png)
+![www](pic/grafana.png)
 
-![www](/pic/alert.png)
+![www](pic/alert.png)
 
-![www](/pic/prometheus.png)
+![www](pic/prometheus.png)
 
 ---
 ## Что необходимо для сдачи задания?
