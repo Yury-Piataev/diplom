@@ -1,0 +1,92 @@
+---
+- name: Update apt cache.
+  apt: update_cache=yes
+
+- name: Gitlab - Install dependencies first
+  become: true
+  ansible.builtin.apt:
+    name:
+      - curl
+      - openssh-server
+      - ca-certificates
+      - tzdata
+      - perl
+      - xz-utils
+    state: present
+    update_cache: true
+
+- name: Gitlab - Get package
+  become: true
+  ansible.builtin.get_url:
+    url: https://packages.gitlab.com/gitlab/gitlab-ce/packages/ubuntu/focal/gitlab-ce_15.2.0-ce.0_amd64.deb/download.deb
+    dest: /tmp/gitlab-ce.deb
+    mode: "0666"
+
+- name: Gitlab - Install a .deb package
+  become: true
+  ansible.builtin.apt:
+    deb: /tmp/gitlab-ce.deb
+  timeout: 600    
+  
+# - name: Gitlab - Configure external_url parameter in /etc/gitlab/gitlab.rb
+#   become: true
+#   ansible.builtin.lineinfile:
+#      path: /etc/gitlab/gitlab.rb
+#      search_string: external_url 'http://gitlab.example.com'
+#      line: external_url 'http://gitlab.{{domain_name}}'
+#      owner: root
+
+- name: Gitlab - Configure external_url parameter in /etc/gitlab/gitlab.rb
+  become: true
+  ansible.builtin.command: echo "external_url 'http://gitlab.piataev.ru'" > /etc/gitlab/gitlab.rb
+
+- name: Gitlab - Configure initial root password parameter in /etc/gitlab/gitlab.rb
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/gitlab/gitlab.rb
+    line: "gitlab_rails['initial_root_password'] = '{{gitlab_root_password}}'"
+
+- name: Gitlab - Configure initial root password display parameter in /etc/gitlab/gitlab.rb
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/gitlab/gitlab.rb
+    line: "gitlab_rails['display_initial_root_password'] = true"
+
+- name: Gitlab - Configure store initial root password parameter in /etc/gitlab/gitlab.rb
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/gitlab/gitlab.rb
+    line: "gitlab_rails['store_initial_root_password'] = true"
+
+- name: Gitlab - Configure runner token parameter in /etc/gitlab/gitlab.rb
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/gitlab/gitlab.rb
+    line: "gitlab_rails['initial_shared_runners_registration_token'] = '{{gitlab_runner_token}}'"
+
+- name: Gitlab - Configure prometheuse to listen on 0.0.0.0:9090 parameter in /etc/gitlab/gitlab.rb
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/gitlab/gitlab.rb
+    line: "prometheus['listen_address'] = '0.0.0.0:9090'"
+
+- name: Gitlab - Configure prometheuse to listen on 0.0.0.0:9090 parameter in /etc/gitlab/gitlab.rb
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/gitlab/gitlab.rb
+    line: "node_exporter['listen_address'] = '0.0.0.0:9100'"
+
+- name: Gitlab - run reconfigure for the first time
+  become: true
+  ansible.builtin.command: gitlab-ctl reconfigure
+  args:
+    chdir: /etc/gitlab/
+    creates: /var/opt/gitlab/bootstrapped
+  ignore_errors: true
+
+- name: Gitlab - Disable Anyone can sign-up as a new user
+  become: true
+  ansible.builtin.command: "gitlab-rails runner 'ApplicationSetting.last.update(signup_enabled: false)'"
+  args:
+    chdir: /etc/gitlab/
+  ignore_errors: true

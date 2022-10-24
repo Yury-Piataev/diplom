@@ -1,0 +1,74 @@
+domain_name: piataev.ru
+
+sub_domains:
+  - name: www
+    ip: "192.168.101.14"
+    port: 80
+  - name: gitlab
+    ip: "192.168.101.15"
+    port: 80
+  - name: grafana
+    ip: "192.168.101.17"
+    port: 3000
+  - name: prometheus
+    ip: "192.168.101.17"
+    port: 9090
+  - name: alertmanager
+    ip: "192.168.101.17"
+    port: 9093
+
+nginx_local_ip: "192.168.101.11"
+
+http_proxy: 'http://192.168.101.11:3128'
+https_proxy: 'http://192.168.101.11:3128'
+
+database_name: 'wordpress'
+database_user: 'wordpress'
+database_password: 'wordpress'
+mysql_replication_master: "db01"
+mysql_replication_user: 'replication_user'
+mysql_replication_user_password: 'replication@user'
+mysql_packages: [ 'mysql-server', 'mysql-client', 'python3-mysqldb']
+mysql_service: mysql
+mysql_conf_dir: "/etc/mysql"
+
+app_packages: [ 'apache2', 'python3-pymysql', 'php', 'php-mysql', 'libapache2-mod-php', 'git' ]
+php_modules: [ 'php-curl', 'php-gd', 'php-mbstring', 'php-xml', 'php-xmlrpc', 'php-soap', 'php-intl', 'php-zip' ] 
+
+http_host: "app.{{ domain_name }}"
+http_port: "80"
+mysql_server: "db01"
+
+db_host: "db01"
+mysql_password: "wordpress"
+mysql_user: "wordpress"
+mysql_db: "wordpress"
+
+gitlab_root_password: "gitlabpass"
+gitlab_runner_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxMjM0NTY3ODl9.47j-Sy1ww4yoKU1c4EhH-kk4-NB5InQ4sJWF-RqQQes"
+
+exporter_binary: 'prometheus_node_exporter'
+exporter_binary_dest: '/usr/bin/prometheus_node_exporter'
+exporter_service: 'prometheus-node-exporter.service'
+exporter_service_dest: '/etc/systemd/system/prometheus-node-exporter.service'
+exporter_upstart: 'prometheus-node-exporter.conf'
+exporter_upstart_dest: '/etc/init/prometheus-node-exporter.conf'
+
+server_binary: 'prometheus'
+server_binary_dest: '/usr/bin/prometheus'
+server_service: 'prometheus.service'
+server_service_dest: '/etc/systemd/system/prometheus.service'
+
+prometheus_user: 'prometheus'
+prometheus_server_name: 'prometheus'
+
+client_information_dict:
+    'piataev.ru': '192.168.101.11'
+    'db01.piataev.ru': '192.168.101.12'
+    'db02.piataev.ru': '192.168.101.13'
+    'app.piataev.ru': '192.168.101.14'
+    'gitlab.piataev.ru': '192.168.101.15'
+    'runner.piataev.ru': '192.168.101.16'
+    'monitoring.piataev.ru': '192.168.101.17'
+
+grafana_password: 'grafanapass'

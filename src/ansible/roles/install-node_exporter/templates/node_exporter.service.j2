@@ -1,0 +1,11 @@
+[Unit]
+Description=NodeExporter
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/node_exporter
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

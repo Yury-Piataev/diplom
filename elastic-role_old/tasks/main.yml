@@ -1,0 +1,27 @@
+- name: Create directrory for Elasticsearch
+  file:
+    state: directory
+    path: "{{ elastic_home }}"
+    mode: 0644
+  tags: elastic
+- name: Copy elastik File in tmp
+  copy:
+    src: "files/elasticsearch-{{ elastic_version }}-linux-x86_64.tar.gz"
+    dest: "/tmp/elasticsearch-{{ elastic_version }}-linux-x86_64.tar.gz"
+    mode: 0644
+- name: Extract Elasticsearch in the installation directory
+  unarchive:
+    copy: false
+    src: "/tmp/elasticsearch-{{ elastic_version }}-linux-x86_64.tar.gz"
+    dest: "{{ elastic_home }}"
+    creates: "{{ elastic_home }}/bin/elasticsearch"
+    # remote_src: yes
+  tags:
+    - skip_ansible_lint
+    - elastic
+- name: Set environment Elastic
+  template:
+    src: templates/elk.sh.j2
+    dest: /etc/profile.d/elk.sh
+    mode: 0644
+  tags: elastic

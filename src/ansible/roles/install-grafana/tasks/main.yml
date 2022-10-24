@@ -1,0 +1,95 @@
+- name: create prometheus system group
+  become: true
+  group:
+    name: "{{ prometheus_user }}"
+    system: true
+    state: present
+
+- name: create prometheus system user
+  become: true
+  user:
+    name: prometheus
+    system: true
+    shell: "/usr/sbin/nologin"
+    group: prometheus
+    createhome: false
+    home: "/var/lib/prometheus"
+
+- name: Unarchive a file that needs to be downloaded (added in 2.0)
+  become: true
+  ansible.builtin.unarchive:
+    src: "https://github.com/prometheus/prometheus/releases/download/v2.37.0/prometheus-2.37.0.linux-amd64.tar.gz"
+    dest: "/tmp/"
+    include: "prometheus-2.37.0.linux-amd64/prometheus"
+    remote_src: yes
+    mode: "0755"
+  environment:
+    http_proxy: 'http://{{ nginx_local_ip }}:3128'
+    https_proxy: 'http://{{ nginx_local_ip }}:3128'
+
+- name: Ensure that /etc/prometheus/rules exists
+  become: true
+  file:
+    state: directory
+    path: /etc/prometheus/rules
+    recurse: true
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_user }}"
+    mode: 0755
+
+- name: create /var/lib/prometheus/data
+  become: true
+  file:
+    state: directory
+    path: /var/lib/prometheus/data
+    recurse: true
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_user }}"
+    mode: 0755
+
+- name: copy the server binary to {{ server_binary_dest }}
+  become: true
+  copy:
+    src: "/tmp/prometheus-2.37.0.linux-amd64/prometheus"
+    dest: "{{ server_binary_dest }}"
+    mode: 0755
+    remote_src: yes
+
+- name: place prometheus config
+  become: true
+  template:
+    src: prometheus.yaml.j2
+    dest: /etc/prometheus/prometheus.yaml
+    force: true
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_user }}"
+    mode: 0664
+  notify:
+    - reload prometheus
+
+- name: put systemd service file in place
+  become: true
+  copy:
+    src: "{{ server_service }}"
+    dest: "{{ server_service_dest }}"
+
+- name: update systemd and restart prometheus server systemd
+  become: true
+  systemd:
+    daemon-reload: true
+    enabled: true
+    state: restarted
+    name: "{{ server_service }}"
+
+  notify: restart_prometheus_server
+
+- name: alerting rules file
+  become: true
+  copy:
+    src: "alert.rules"
+    dest: "/etc/prometheus/rules/ansible_managed.rules"
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_user }}"
+    mode: 0640
+  notify:
+    - reload prometheus

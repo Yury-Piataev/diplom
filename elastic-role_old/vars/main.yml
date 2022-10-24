@@ -1,0 +1,5 @@
+---
+# vars file for roles
+java_jdk_version: 11.0.15
+java_oracle_jdk_package: jdk-11.0.15_linux-x64_bin.tar.gz
+java_home: /opt/jdk/11.0.15

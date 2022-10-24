@@ -1,0 +1,63 @@
+---
+# tasks file for certbot
+- name: Certbot - Install snapd for certbot snap
+  become: true
+  ansible.builtin.apt:
+    name: snapd
+    state: present
+
+- name: Certbot - remove standard certbot package if any
+  become: true
+  ansible.builtin.apt:
+    name: certbot
+    state: absent
+
+- name: Certbot - install certbot snap
+  become: true
+  community.general.snap:
+    name: certbot
+    state: present
+    classic: yes
+
+- name: Certbot - get SSL certificates for nginx 1/2
+  set_fact:
+    sub_domains_list_string: >-
+      {% for sub_domain in sub_domains %}
+      -d {{ sub_domain.name }}.{{ domain_name }} 
+      {% endfor %}
+
+- name: Certbot - get SSL certificates for nginx 2/2
+  become: true
+  ansible.builtin.shell:
+    cmd: "certbot certonly --nginx -n --agree-tos -m piataev@mail.ru -d {{ domain_name }} {{ sub_domains_list_string }}"
+  notify: reload-nginx
+#--test-cert
+- name: Certbot - print subdomains string
+  debug:
+    msg: "{{ sub_domains_list_string }}"
+
+- name: Copy https config
+  become: true
+  template:
+    src: nginx_sites.conf.j2
+    dest: /etc/nginx/sites-available/https
+
+- name: Create a symbolic link
+  become: true
+  file:
+    src: /etc/nginx/sites-available/https
+    dest: /etc/nginx/sites-enabled/https
+    state: link
+    force: yes
+
+- name: Copy http config with redirect
+  become: true
+  template:
+    src: templates/http.conf.j2
+    dest: /etc/nginx/sites-available/http
+
+- name: Add cron job for certbot renewal 
+  cron:
+    name: Certbot automatic renewal
+    job: "certbot renew"
+    month: "*/2"

@@ -1,0 +1,57 @@
+- name: Install nginx 11
+  hosts: revers 
+  become: true
+  become_user: root
+  become_method: sudo
+  roles:
+    - install-nginx
+
+- name: Install mysql 12 13
+  hosts: db01 db02 
+  become: true
+  become_user: root
+  become_method: sudo
+  roles:
+    - install-mysql
+
+- name: Install wordpress 14
+  hosts: app 
+  become: true
+  become_user: root
+  become_method: sudo
+  roles:
+    - install-wordpress
+
+- name: Install gitlab 15
+  hosts: gitlab 
+  become: true
+  become_user: root
+  become_method: sudo
+  roles:
+    - install-gitlab    
+
+- name: Install runner 16
+  hosts: runner 
+  become: true
+  become_user: root
+  become_method: sudo
+  roles:
+    - install-runner
+
+- name: Install monitoring 17 
+  hosts: monitoring  
+  become: true
+  become_user: root
+  become_method: sudo
+  roles:
+    - install-monitoring
+    
+- name: install-node_exporter
+  hosts: all
+  become: true
+  become_user: root
+  become_method: sudo
+  roles:
+    - install-node_exporter
+
+        
