@@ -77,7 +77,7 @@ real    26m32,088s
 user    3m11,179s
 sys     0m27,417s
 ```
-Вся инфраструктура, и настройка происходит за 26 минут.
+После ввода команды terraform apply -auto-approve вся инфраструктура, и настройка происходит за 26 минут.
 
 ---
 ### Установка Nginx и LetsEncrypt
@@ -134,7 +134,7 @@ ___
 Разработана роль для установки WordPress. 
 Роль устанавливает WordPress и Apache на ВМ .
 
-![www](/pic/wp.png)
+![www](pic/wp.png)
 ---
 ### Установка Gitlab CE и Gitlab Runner
 
@@ -174,7 +174,7 @@ deploy-job:
     - echo "Application successfully deployed."
 ```
 
-![www](/pic/gitlab.png)
+![www](pic/gitlab.png)
 
 После назначения тега v1.0.0 файл test.html доставляется на удаленный сервер. 
 _
