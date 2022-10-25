@@ -29,7 +29,7 @@
 - name: Certbot - get SSL certificates for nginx 2/2
   become: true
   ansible.builtin.shell:
-    cmd: "certbot certonly --nginx -n --agree-tos -m piataev@mail.ru -d {{ domain_name }} {{ sub_domains_list_string }}"
+    cmd: "certbot certonly --nginx --test-cert -n --agree-tos -m piataev@mail.ru -d {{ domain_name }} {{ sub_domains_list_string }}"
   notify: reload-nginx
 #--test-cert
 - name: Certbot - print subdomains string

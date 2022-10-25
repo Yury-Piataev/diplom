@@ -38,7 +38,7 @@
 
 - name: Gitlab - Configure external_url parameter in /etc/gitlab/gitlab.rb
   become: true
-  ansible.builtin.command: echo "external_url 'http://gitlab.piataev.ru'" > /etc/gitlab/gitlab.rb
+  ansible.builtin.command: echo "external_url 'http://gitlab.piataev.ru'" | sudo tee /etc/gitlab/gitlab.rb
 
 - name: Gitlab - Configure initial root password parameter in /etc/gitlab/gitlab.rb
   become: true

@@ -1,110 +1,97 @@
 ---
-# - name: Create directrory for test
-#   file:
-#     state: directory
-#     path: local/tests
-#     mode: 0755
-
 # tasks file for install-nginx
 
-- name: Add an Apt signing key, uses whichever key is at the URL
-  ansible.builtin.apt_key:
-    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-    state: present
+# - name: Add an Apt signing key, uses whichever key is at the URL
+#   ansible.builtin.apt_key:
+#     url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+#     state: present
 
-- name: Update and upgrade apt packages
-  become: true
-  ansible.builtin.apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
-
-- name: Upgrade all apt packages
-  apt: upgrade=dist force_apt_get=yes
-
-- name: Nginx - Install nginx
-  become: true
-  ansible.builtin.apt:
-    name: nginx-full
-    state: present
-  notify: reload-nginx
-
-- name: Nginx - Enable nginx
-  become: true
-  ansible.builtin.systemd:
-    name: nginx
-    state: started
-    enabled: yes
-
-- name: Nginx - install squid proxy for https
-  become: true
-  ansible.builtin.apt:
-    name: squid
-    state: present
-
-- name: Nginx - configure squid to allow all local networks to connect to it
-  become: true
-  ansible.builtin.lineinfile:
-    path: /etc/squid/squid.conf
-    regexp: "^#http_access allow localnet"
-    line: http_access allow localnet
-
-- name: Nginx - restart squid service
-  become: true
-  ansible.builtin.systemd:
-    name: squid
-    state: restarted
-    enabled: yes
-
-- name: Nginx - create config file
-  become: true
-  ansible.builtin.template:
-    src: nginx.conf.j2
-    dest: /etc/nginx/conf.d/{{ domain_name }}.conf
-  notify: reload-nginx
-
-- name: Nginx - install iptables
-  become: true
-  ansible.builtin.apt:
-    name: iptables-persistent
-    state: present
-
-- name: Create NAT Iptables
-  become: true
-  iptables:
-    table: nat
-    chain: POSTROUTING
-    out_interface: 'eth0'
-    jump: MASQUERADE
-
-- name: Enable IPv4 forwarding
-  become: true
-  sysctl:
-    name: net.ipv4.ip_forward
-    value: 1
-    state: present
-    reload: true
-
-# - name: Configure APT proxy
+# - name: Update and upgrade apt packages
 #   become: true
-#   ansible.builtin.template:
-#     src: proxy.conf.j2
-#     dest: /etc/apt/apt.conf.d/proxy.conf  
+#   ansible.builtin.apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+
+# - name: Upgrade all apt packages
+#   apt: upgrade=dist force_apt_get=yes
+
+# - name: Nginx - Install nginx
+#   become: true
+#   ansible.builtin.apt:
+#     name: nginx-full
+#     state: present
 #   notify: reload-nginx
 
-- name: Copy - private key to proxy server
-  ansible.builtin.copy:
-    src: ~/.ssh/id_rsa
-    dest: /home/ubuntu/.ssh/id_rsa
-    owner: ubuntu
-    group: ubuntu
-    mode: u+rw,g-rwx,o-rwx
-    backup: yes
+# - name: Nginx - Enable nginx
+#   become: true
+#   ansible.builtin.systemd:
+#     name: nginx
+#     state: started
+#     enabled: yes
 
-- name: Copy - ssh config to reduce strict restrictions on a proxy host
-  ansible.builtin.copy:
-    src: config.ssh
-    dest: /home/ubuntu/.ssh/config
-    owner: ubuntu
-    group: ubuntu
-    mode: u+rw,g+rw,o+r
-    backup: yes
+# - name: Nginx - install squid proxy for https
+#   become: true
+#   ansible.builtin.apt:
+#     name: squid
+#     state: present
+
+# - name: Nginx - configure squid to allow all local networks to connect to it
+#   become: true
+#   ansible.builtin.lineinfile:
+#     path: /etc/squid/squid.conf
+#     regexp: "^#http_access allow localnet"
+#     line: http_access allow localnet
+
+# - name: Nginx - restart squid service
+#   become: true
+#   ansible.builtin.systemd:
+#     name: squid
+#     state: restarted
+#     enabled: yes
+
+# - name: Nginx - create config file
+#   become: true
+#   ansible.builtin.template:
+#     src: nginx.conf.j2
+#     dest: /etc/nginx/conf.d/{{ domain_name }}.conf
+#   notify: reload-nginx
+
+# - name: Nginx - install iptables
+#   become: true
+#   ansible.builtin.apt:
+#     name: iptables-persistent
+#     state: present
+
+# - name: Create NAT Iptables
+#   become: true
+#   iptables:
+#     table: nat
+#     chain: POSTROUTING
+#     out_interface: 'eth0'
+#     jump: MASQUERADE
+
+# - name: Enable IPv4 forwarding
+#   become: true
+#   sysctl:
+#     name: net.ipv4.ip_forward
+#     value: 1
+#     state: present
+#     reload: true
+
+# - name: Copy - private key to proxy server
+#   ansible.builtin.copy:
+#     src: ~/.ssh/id_rsa
+#     dest: /home/ubuntu/.ssh/id_rsa
+#     owner: ubuntu
+#     group: ubuntu
+#     mode: u+rw,g-rwx,o-rwx
+#     backup: yes
+
+# - name: Copy - ssh config to reduce strict restrictions on a proxy host
+#   ansible.builtin.copy:
+#     src: config.ssh
+#     dest: /home/ubuntu/.ssh/config
+#     owner: ubuntu
+#     group: ubuntu
+#     mode: u+rw,g+rw,o+r
+#     backup: yes
 
 - import_tasks: certbot.yml

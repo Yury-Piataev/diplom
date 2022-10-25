@@ -132,9 +132,12 @@ ___
 ### Установка WordPress
 
 Разработана роль для установки WordPress. 
-Роль устанавливает WordPress и Apache на ВМ .
+Роль устанавливает WordPress и Apache на ВМ.
 
-![www](/pic/wp.png)
+Не сделал снимок с страницы приветствия WordPress действующими сертификатами, есть снимок с нарушенншм CSS.
+![www](pic/css.png)
+
+![www](pic/wp.png)
 ---
 ### Установка Gitlab CE и Gitlab Runner
 
@@ -174,7 +177,7 @@ deploy-job:
     - echo "Application successfully deployed."
 ```
 
-![www](/pic/gitlab.png)
+![www](pic/gitlab.png)
 
 После назначения тега v1.0.0 файл test.html доставляется на удаленный сервер. 
 _
@@ -183,11 +186,11 @@ _
 Разработана роль для установки Prometheus, Alert Manager и Grafana. 
 Подключен дашборд, отображаются метрики.
 
-![www](/pic/grafana.png)
+![www](pic/grafana.png)
 
-![www](/pic/alert.png)
+![www](pic/alert.png)
 
-![www](/pic/prometheus.png)
+![www](pic/prometheus.png)
 
 ---
 ## Что необходимо для сдачи задания?
