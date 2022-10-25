@@ -1,0 +1,6 @@
+terraform/key.json
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/variables.tf
+terraform/meta.txt
+ansible/group_vars/all.yml
