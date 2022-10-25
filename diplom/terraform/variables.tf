@@ -1,13 +1,13 @@
 # Заменить на ID своего облака
 # https://console.cloud.yandex.ru/cloud?section=overview
 variable "yandex_cloud_id" {
-  default = "b1gmdbsrqhu643i5e8rd"
+  default = ""
 }
 
 # Заменить на Folder своего облака
 # https://console.cloud.yandex.ru/cloud?section=overview
 variable "yandex_folder_id" {
-  default = "b1gf26b7li9k3rqpgasq"
+  default = ""
 }
 
 # Заменить на ID своего образа
@@ -28,15 +28,15 @@ variable "ubuntu-nat" {
 
 # access_key = "<идентификатор статического ключа>"
 variable "access_key" {
-  default = "YCAJEC_kaT11hPZ8Dupoq_oIH"
+  default = ""
 }
 
 # secret_key = "<секретный ключ>"
 variable "secret_key" {
-  default = "YCOrfpMaB8JvZKL8n-T1xnmo6UbxtU67oPlDyxWp"
+  default = "-"
 }
 
-# AQAAAAAAdHTMAATuwQQEfgAM4k5BtT4n0iSOe4s
+
 
 # ssh_common_args 
 #variable "ssh-common" {
